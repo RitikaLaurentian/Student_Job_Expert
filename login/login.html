@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Job Expert</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #f1f2f6;
+}
+
+/* Center box */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Login box */
+.login-box {
+    background: #fff;
+    padding: 35px;
+    width: 360px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 1s ease;
+}
+
+/* Logo */
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.logo span {
+    color: #27ae60;
+}
+
+/* Heading */
+.login-box h2 {
+    margin-bottom: 5px;
+}
+
+.login-box p {
+    color: gray;
+    margin-bottom: 20px;
+}
+
+/* Input */
+.input-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.input-box input:focus {
+    border-color: #27ae60;
+    outline: none;
+    box-shadow: 0 0 5px #27ae60;
+}
+
+/* Show password */
+.show-pass {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: gray;
+}
+
+/* Options */
+.options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* Button */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #219150;
+    transform: scale(1.03);
+}
+
+/* Social */
+.or {
+    margin: 15px 0;
+    color: gray;
+}
+
+.social button {
+    width: 48%;
+    padding: 10px;
+    margin: 5px 1%;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.google {
+    background: #db4437;
+}
+
+.facebook {
+    background: #3b5998;
+}
+
+.signup {
+    margin-top: 15px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="login-box">
+
+        <!-- Logo -->
+        <div class="logo">🎓 Student<span>Job</span>Expert</div>
+
+        <h2>Welcome Back</h2>
+        <p>Login to your account</p>
+
+        <form onsubmit="return validateForm()">
+
+            <div class="input-box">
+                <input type="email" id="email" placeholder="Email Address" required>
+            </div>
+
+            <div class="input-box">
+                <input type="password" id="password" placeholder="Password" required>
+                <span class="show-pass" onclick="togglePassword()">Show</span>
+            </div>
+
+            <div class="options">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button class="login-btn">Log In</button>
+
+        </form>
+
+        <div class="or">Or continue with</div>
+
+        <div class="social">
+            <button class="google">Google</button>
+            <button class="facebook">Facebook</button>
+        </div>
+
+        <div class="signup">
+            New here? <a href="#">Create an Account</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    var password = document.getElementById("password");
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+
+function validateForm() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    if(password.length < 6) {
+        alert("Password must be at least 6 characters");
+        return false;
+    }
+
+    alert("Login Successful!");
+    return true;
+}
+</script>
+
+</body>
+</html>
