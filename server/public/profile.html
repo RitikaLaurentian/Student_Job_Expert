@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Job Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; background: #f4f6fb; }
+        .sidebar {
+            width: 220px; height: 100vh; background: linear-gradient(to bottom, #6a11cb, #2575fc);
+            color: white; padding: 20px; position: fixed;
+        }
+        .sidebar h2 { margin-bottom: 30px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .sidebar ul li:hover { background: rgba(255,255,255,0.2); }
+        .sidebar ul li a { color: white; text-decoration: none; display: block; }
+        .main { margin-left: 220px; width: calc(100% - 220px); }
+        .header {
+            height: 220px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+            url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d');
+            background-size: cover; background-position: center; color: white; display: flex; align-items: flex-end; padding: 30px;
+        }
+        .container { padding: 30px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .profile-top { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .profile-top img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #6a11cb; }
+        .progress-bar { width: 100%; height: 8px; background: #ddd; border-radius: 10px; margin-top: 10px; }
+        .progress { height: 100%; width: 0%; background: linear-gradient(to right, #6a11cb, #2575fc); border-radius: 10px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { padding: 10px 15px; border: none; background: #6a11cb; color: white; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .job { padding: 15px; border-bottom: 1px solid #eee; }
+        .job:hover { background: #f9f9f9; }
+        .readonly-field { background-color: #f0f0f0; cursor: not-allowed; }
+        @media(max-width:900px) { .sidebar { display: none; } .main { margin-left: 0; width: 100%; } .info-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Student Portal</h2>
+        <ul>
+            <li>Dashboard</li>
+            <li>Profile</li>
+            <li><a href="search.html">🔍 Search</a></li>
+            <li>Applied Jobs</li>
+            <li>Upload Resume</li>
+            <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+        </ul>
+    </div>
+    <div class="main">
+        <div class="header"><h1>Improve your job matches</h1></div>
+        <div class="container">
+            <div class="card">
+                <div class="profile-top">
+                    <img src="https://via.placeholder.com/100" id="profilePic">
+                    <div>
+                        <h2 id="headerName">Student Name</h2>
+                        <p id="headerEmail">student@email.com</p>
+                        <input type="file" onchange="loadImage(event)">
+                    </div>
+                </div>
+                <h3>Profile Completion</h3>
+                <div class="progress-bar"><div class="progress" id="progress"></div></div>
+                <div class="info-grid" id="profileForm">
+                    <div class="input-group"><input type="text" id="fullName" placeholder="Full Name" oninput="updateProgress()"></div>
+                    <div class="input-group"><input type="email" id="email" placeholder="Email" class="readonly-field" readonly disabled oninput="updateProgress()"></div>
+                    <div class="input-group"><input type="text" id="phone" placeholder="Phone" oninput="updateProgress()"></div>
+                    <div class="input-group">
+                        <select id="experienceLevel" onchange="updateProgress()">
+                            <option value="">Experience Level</option>
+                            <option value="Fresher">Fresher</option>
+                            <option value="Experienced">Experienced</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><input type="text" id="skills" placeholder="Skills (optional)" oninput="updateProgress()"></div>
+                    <div class="input-group"><input type="text" id="preferredJob" placeholder="Preferred Job" oninput="updateProgress()"></div>
+                </div>
+                <textarea id="workExperience" placeholder="Work Experience" style="width:100%; margin-top:10px;" oninput="updateProgress()"></textarea>
+                <br><label>Upload Resume:</label><input type="file" id="resume" onchange="updateProgress()"><br>
+                <button class="btn" id="saveProfileBtn">Save Profile</button>
+            </div>
+            <div class="card"><h3>Job Matches For You</h3><div class="job">Part-time Retail Assistant</div><div class="job">Library Assistant</div><div class="job">Campus IT Support</div><div class="job">Customer Service Associate</div></div>
+        </div>
+    </div>
+    <script>
+        function loadImage(event) { document.getElementById('profilePic').src = URL.createObjectURL(event.target.files[0]); }
+        function updateProgress() {
+            let inputs = document.querySelectorAll('#profileForm input[type=text], #profileForm input[type=email], #profileForm textarea, #profileForm select');
+            let filled = 0;
+            inputs.forEach(input => { if (input.value.trim() !== '') filled++; });
+            let progress = (filled / inputs.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+        (async function() {
+            const sessionRes = await fetch('/api/session');
+            const sessionData = await sessionRes.json();
+            if (!sessionData.authenticated) window.location.href = '/login.html';
+            const userRes = await fetch('/api/user');
+            if (userRes.ok) {
+                const user = await userRes.json();
+                document.getElementById('fullName').value = user.fullName || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('experienceLevel').value = user.experienceLevel || '';
+                document.getElementById('workExperience').value = user.workExperience || '';
+                document.getElementById('headerName').innerText = user.fullName || 'Student Name';
+                document.getElementById('headerEmail').innerText = user.email || 'student@email.com';
+                updateProgress();
+            } else alert('Failed to load profile');
+        })();
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const experienceLevel = document.getElementById('experienceLevel').value;
+            const workExperience = document.getElementById('workExperience').value;
+            const res = await fetch('/api/user', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullName, phone, experienceLevel, workExperience })
+            });
+            if (res.ok) {
+                alert('Profile updated successfully');
+                document.getElementById('headerName').innerText = fullName || 'Student Name';
+                updateProgress();
+            } else alert('Update failed');
+        });
+        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const res = await fetch('/api/logout', { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) window.location.href = data.redirect;
+                else alert('Logout failed');
+            } catch (err) {
+                alert('Network error during logout');
+            }
+        });
+    </script>
+</body>
+</html>

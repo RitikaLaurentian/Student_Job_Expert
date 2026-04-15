@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Job Expert - Login</title>
+    <style>
+        * { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+        body { background: #f1f2f6; }
+        .container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-box {
+            background: #fff; padding: 35px; width: 360px; border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); text-align: center; animation: fadeIn 1s ease;
+        }
+        .logo { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .logo span { color: #27ae60; }
+        .login-box h2 { margin-bottom: 5px; }
+        .login-box p { color: gray; margin-bottom: 20px; }
+        .input-box { position: relative; margin-bottom: 15px; }
+        .input-box input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; }
+        .input-box input:focus { border-color: #27ae60; outline: none; box-shadow: 0 0 5px #27ae60; }
+        .show-pass { position: absolute; right: 10px; top: 12px; cursor: pointer; font-size: 14px; color: gray; }
+        .options { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 15px; }
+        .login-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .login-btn:hover { background: #219150; transform: scale(1.03); }
+        .or { margin: 15px 0; color: gray; }
+        .social button { width: 48%; padding: 10px; margin: 5px 1%; border: none; border-radius: 8px; color: white; cursor: pointer; }
+        .google { background: #db4437; }
+        .facebook { background: #3b5998; }
+        .signup { margin-top: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .error-msg { color: red; margin-bottom: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="logo">🎓 Student<span>Job</span>Expert</div>
+            <h2>Welcome Back</h2>
+            <p>Login to your account</p>
+            <div id="errorMsg" class="error-msg"></div>
+            <form id="loginForm">
+                <div class="input-box">
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <span class="show-pass" onclick="togglePassword()">Show</span>
+                </div>
+                <div class="options">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="forgotpassword.html">Forgot Password?</a>
+                </div>
+                <button type="submit" class="login-btn">Log In</button>
+            </form>
+            <div class="or">Or continue with</div>
+            <div class="social">
+                <button class="google">Google</button>
+                <button class="facebook">Facebook</button>
+            </div>
+            <div class="signup">New here? <a href="signup.html">Create an Account</a></div>
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const pwd = document.getElementById("password");
+            pwd.type = pwd.type === "password" ? "text" : "password";
+        }
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = '';
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) window.location.href = data.redirect;
+                else errorDiv.textContent = data.error || 'Login failed';
+            } catch (err) {
+                errorDiv.textContent = 'Network error';
+            }
+        });
+    </script>
+</body>
+</html>

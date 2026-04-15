@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (async function() {
+            const res = await fetch('/api/session');
+            const data = await res.json();
+            if (!data.authenticated) window.location.href = '/login.html';
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div style="margin-bottom: 20px; text-align: right;">
+            <a href="profile.html" class="back-btn">← Back to Profile</a>
+        </div>
+        <h1>🔍 Job Search</h1>
+        <div class="search-form">
+            <input type="text" id="searchInput" placeholder="e.g., developer jobs in chicago" />
+            <button id="searchBtn">Search</button>
+        </div>
+        <div id="loading" class="loading" style="display: none;">Loading...</div>
+        <div id="results" class="results"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
